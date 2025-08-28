@@ -1,19 +1,16 @@
+[phases.setup]
+nixPkgs = ["go"]
+
 [phases.build]
 cmds = [
     "go mod download",
     "go build -ldflags='-w -s' -o main ."
 ]
 
-[phases.start]
-cmds = ["./main"]
-
-[phases.setup]
-nixPkgs = ["go", "gcc"]
-
 [start]
 cmd = "./main"
 
 [variables]
 CGO_ENABLED = "0"
-GOOS = "linux"
+GO111MODULE = "on"
 PORT = "8080"

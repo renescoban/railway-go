@@ -23,12 +23,14 @@ A simple Go backend API with REST endpoints, ready for deployment on Railway.
 - Railway account (https://railway.app)
 - GitHub repository
 
-### 🚀 Quick Deployment (Recommended)
+### 🚀 Quick Deployment (Nixpacks)
+
+Railway will automatically detect your Go project and use Nixpacks for deployment:
 
 1. **Push to GitHub:**
    ```bash
    git add .
-   git commit -m "Deploy Go backend"
+   git commit -m "Deploy Go backend with Nixpacks"
    git push origin main
    ```
 
@@ -42,44 +44,20 @@ A simple Go backend API with REST endpoints, ready for deployment on Railway.
    - Visit the provided Railway URL
    - Test endpoints: `/`, `/api/health`, `/api/users`
 
-### 🔧 Troubleshooting Deployment Issues
+### ✨ Why Nixpacks?
 
-If you encounter build errors, try these solutions:
+- **No Docker registry issues** - Railway's native build system
+- **Faster deployments** - Optimized for Go applications
+- **Automatic dependency detection** - No manual configuration needed
+- **Better resource management** - Railway handles optimization
+- **More reliable** - No network timeouts or registry problems
 
-#### Solution 1: Use Nixpacks (Default)
-- This uses Railway's native Go support (recommended)
-- More reliable than Docker for Go applications
-- Automatically configured via `nixpacks.toml`
+### 🔧 Configuration Files
 
-#### Solution 2: Use Docker (If Nixpacks Fails)
-If Nixpacks fails, switch to Docker:
-```bash
-mv Dockerfile.backup Dockerfile
-git add Dockerfile
-git commit -m "Switch to Docker deployment"
-git push origin main
-```
-
-#### Solution 3: Manual Troubleshooting
-Run the troubleshooting script:
-```bash
-chmod +x deploy.sh
-./deploy.sh
-```
-
-### Common Issues & Solutions
-
-**❌ "context canceled" error:**
-- **Cause:** Network timeouts or Docker registry issues
-- **Solution:** Use Nixpacks instead of Docker, or try the backup Dockerfile
-
-**❌ "exit code: 137" error:**
-- **Cause:** Memory limits during build
-- **Solution:** The optimized Dockerfile handles this better
-
-**❌ Build timeouts:**
-- **Cause:** Large dependencies or slow network
-- **Solution:** Use Nixpacks for faster builds
+Your deployment is configured via:
+- **`nixpacks.toml`** - Build and runtime configuration
+- **`railway.toml`** - Railway-specific settings
+- **`.dockerignore`** - (Kept for future Docker use if needed)
 
 ### Using Railway CLI (Alternative)
 
@@ -101,14 +79,11 @@ If you prefer CLI deployment:
 ```
 .
 ├── main.go           # Main application file
-├── Dockerfile        # Docker configuration (optimized)
-├── Dockerfile.backup # Backup Docker config (if needed)
 ├── railway.toml      # Railway deployment config
-├── nixpacks.toml     # Nixpacks configuration
-├── deploy.sh         # Deployment troubleshooting script
+├── nixpacks.toml     # Nixpacks build configuration
 ├── go.mod           # Go module file
 ├── go.sum           # Go dependencies checksum
 ├── .gitignore       # Git ignore rules
-├── .dockerignore    # Docker ignore rules
+├── .dockerignore    # Docker ignore rules (kept for compatibility)
 └── README.md        # This file
 ```
