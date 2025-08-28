@@ -1,13 +1,14 @@
 # Build stage
-FROM golang:1.21-alpine3.18 AS builder
+FROM golang:1.21-alpine AS builder
 
 WORKDIR /app
 
 # Copy go mod files
-COPY go.mod ./
+COPY go.mod go.sum ./
 
-# Download dependencies
-RUN go mod download
+# Download dependencies (with timeout handling)
+RUN apk add --no-cache git ca-certificates && \
+    go mod download
 
 # Copy source code
 COPY . .
@@ -15,25 +16,19 @@ COPY . .
 # Build the application
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -a -installsuffix cgo -o main .
 
-# Final stage - use specific Alpine version for Railway compatibility
+# Runtime stage with minimal image
 FROM alpine:3.18
 
-# Install ca-certificates in a single layer with other setup
-RUN apk add --no-cache ca-certificates && \
-    addgroup -g 1001 -S appgroup && \
-    adduser -u 1001 -S appuser -G appgroup
+# Install ca-certificates only (minimal setup)
+RUN apk add --no-cache ca-certificates
 
 WORKDIR /app
 
 # Copy the binary from builder stage
 COPY --from=builder /app/main .
 
-# Change ownership and make executable
-RUN chown appuser:appgroup main && \
-    chmod +x main
-
-# Switch to non-root user
-USER appuser
+# Make sure the binary is executable
+RUN chmod +x main
 
 # Expose port
 EXPOSE 8080

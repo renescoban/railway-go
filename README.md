@@ -21,57 +21,78 @@ A simple Go backend API with REST endpoints, ready for deployment on Railway.
 
 ### Prerequisites
 - Railway account (https://railway.app)
-- Railway CLI installed (optional, but recommended)
+- GitHub repository
 
-### Deployment Steps
+### 🚀 Quick Deployment (Recommended)
 
-1. **Connect your repository to Railway:**
+1. **Push to GitHub:**
+   ```bash
+   git add .
+   git commit -m "Deploy Go backend"
+   git push origin main
+   ```
+
+2. **Deploy on Railway:**
    - Go to https://railway.app
-   - Click "New Project"
-   - Choose "Deploy from GitHub repo"
+   - Click "New Project" → "Deploy from GitHub repo"
    - Connect your GitHub account and select this repository
+   - Railway will auto-detect Nixpacks and deploy automatically
 
-2. **Railway will automatically detect:**
-   - The `Dockerfile` for containerization
-   - The `railway.toml` configuration
-   - Environment variables and port settings
+3. **Test Your API:**
+   - Visit the provided Railway URL
+   - Test endpoints: `/`, `/api/health`, `/api/users`
 
-3. **Environment Variables (optional):**
-   - Railway automatically sets the `PORT` environment variable
-   - Add any additional environment variables in Railway dashboard under "Variables"
+### 🔧 Troubleshooting Deployment Issues
 
-4. **Deploy:**
-   - Railway will build and deploy automatically when you push to your main branch
-   - Or manually trigger deployment in the Railway dashboard
+If you encounter build errors, try these solutions:
 
-5. **Check your deployment:**
-   - Once deployed, Railway will provide a URL (e.g., `https://your-app.railway.app`)
-   - Test the endpoints:
-     - `https://your-app.railway.app/` - Welcome message
-     - `https://your-app.railway.app/api/health` - Health check
-     - `https://your-app.railway.app/api/users` - Users list
+#### Solution 1: Use Nixpacks (Default)
+- This uses Railway's native Go support (recommended)
+- More reliable than Docker for Go applications
+- Automatically configured via `nixpacks.toml`
+
+#### Solution 2: Use Docker (If Nixpacks Fails)
+If Nixpacks fails, switch to Docker:
+```bash
+mv Dockerfile.backup Dockerfile
+git add Dockerfile
+git commit -m "Switch to Docker deployment"
+git push origin main
+```
+
+#### Solution 3: Manual Troubleshooting
+Run the troubleshooting script:
+```bash
+chmod +x deploy.sh
+./deploy.sh
+```
+
+### Common Issues & Solutions
+
+**❌ "context canceled" error:**
+- **Cause:** Network timeouts or Docker registry issues
+- **Solution:** Use Nixpacks instead of Docker, or try the backup Dockerfile
+
+**❌ "exit code: 137" error:**
+- **Cause:** Memory limits during build
+- **Solution:** The optimized Dockerfile handles this better
+
+**❌ Build timeouts:**
+- **Cause:** Large dependencies or slow network
+- **Solution:** Use Nixpacks for faster builds
 
 ### Using Railway CLI (Alternative)
 
-If you prefer using CLI:
+If you prefer CLI deployment:
 
 1. Install Railway CLI:
    ```bash
    npm install -g @railway/cli
    ```
 
-2. Login to Railway:
+2. Login and deploy:
    ```bash
    railway login
-   ```
-
-3. Initialize Railway project:
-   ```bash
-   railway init
-   ```
-
-4. Deploy:
-   ```bash
    railway up
    ```
 
@@ -80,9 +101,14 @@ If you prefer using CLI:
 ```
 .
 ├── main.go           # Main application file
-├── Dockerfile        # Docker configuration
+├── Dockerfile        # Docker configuration (optimized)
+├── Dockerfile.backup # Backup Docker config (if needed)
 ├── railway.toml      # Railway deployment config
+├── nixpacks.toml     # Nixpacks configuration
+├── deploy.sh         # Deployment troubleshooting script
 ├── go.mod           # Go module file
+├── go.sum           # Go dependencies checksum
 ├── .gitignore       # Git ignore rules
+├── .dockerignore    # Docker ignore rules
 └── README.md        # This file
 ```

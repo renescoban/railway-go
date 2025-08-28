@@ -1,5 +1,5 @@
 [build]
-builder = "dockerfile"
+builder = "NIXPACKS"
 
 [deploy]
 startCommand = "./main"
@@ -11,3 +11,4 @@ sleepApplication = false
 
 [environment]
 PORT = "8080"
+CGO_ENABLED = "0"
